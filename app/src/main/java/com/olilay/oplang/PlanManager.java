@@ -1,0 +1,109 @@
+package com.olilay.oplang;
+
+import android.app.Activity;
+import android.app.Notification;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * Created by Oliver Layer on 10.11.2015.
+ */
+public class PlanManager
+{
+    private boolean isTeacher;
+    private String cookie;
+
+    private Plan[] plans;
+    private PlanFragment[] planFragments;
+
+    private Activity activity;
+    private Context context;
+
+
+    public PlanManager(String cookie, boolean isTeacher, PlanFragment[] planFragments, Activity activity)
+    {
+        this.cookie = cookie;
+        this.isTeacher = isTeacher;
+        this.activity = activity;
+        this.planFragments = planFragments;
+
+        this.context = activity;
+    }
+
+    public PlanManager(boolean isTeacher, Context context) //Service version: for push notif, only supports PlanData
+    {
+        this.isTeacher = isTeacher;
+        this.context = context;
+    }
+
+
+    private void initPlans(boolean isTeacher)
+    {
+        plans = new Plan[2];
+
+        plans[0] = new Plan(cookie, true, isTeacher, null, this);
+        plans[1] = new Plan(cookie, false, isTeacher, null, this);
+    }
+
+
+    public void initPlans()
+    {
+        initPlans(isTeacher);
+    }
+
+    public void refreshPlanImages()
+    {
+        plans[0].refreshPlanImage();
+        plans[1].refreshPlanImage();
+    }
+
+    public void refreshPlanData(boolean showOnlyTomorrow)
+    {
+        if(!isTeacher)
+        {
+            if(Settings.getDailyPush(context) || Settings.getSpecialPush(context))
+            {
+                plans[0].refreshPlanData(showOnlyTomorrow);
+                plans[1].refreshPlanData(showOnlyTomorrow);
+            }
+        }
+
+    }
+
+    public void changePlans()
+    {
+        isTeacher = !isTeacher; //invert boolean: teachers will toggle to pupils, and back if they want to.
+        initPlans(isTeacher);
+        refreshPlanImages();
+    }
+
+
+    public void onPlanImageRefreshed(Bitmap bitmap, Plan plan)
+    {
+
+    }
+
+    public void onPlanDataRefreshed(PlanNotification planNotification, Plan plan)
+    {
+        planNotification.push();
+    }
+
+
+    public Activity getActivity()
+    {
+        return activity;
+    }
+
+    public Context getContext()
+    {
+        return context;
+    }
+}
