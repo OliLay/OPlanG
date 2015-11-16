@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:opg="http://schemas.android.com/apk/res-auto" >
+        <item android:id="@+id/action_refresh"
+            android:icon="@drawable/ic_action_reload"
+            android:title="Aktualisieren"
+            opg:showAsAction="always" />
+</menu>
