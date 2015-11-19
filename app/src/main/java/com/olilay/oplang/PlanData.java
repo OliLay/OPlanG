@@ -113,7 +113,7 @@ public class PlanData extends AsyncTask<Void, Void, Void>
     {
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("layer", "*****".toCharArray());
+                return new PasswordAuthentication("layer", "3cyMXqn9".toCharArray());
             }
         });
 
