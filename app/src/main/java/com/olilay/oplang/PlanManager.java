@@ -49,8 +49,13 @@ public class PlanManager
     {
         plans = new Plan[2];
 
-        plans[0] = new Plan(cookie, true, isTeacher, null, this);
-        plans[1] = new Plan(cookie, false, isTeacher, null, this);
+        if(planFragments == null)
+        {
+            planFragments = new PlanFragment[2];
+        }
+
+        plans[0] = new Plan(cookie, true, isTeacher, planFragments[0], this);
+        plans[1] = new Plan(cookie, false, isTeacher, planFragments[1], this);
     }
 
 
