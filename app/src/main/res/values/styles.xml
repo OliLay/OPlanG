@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppThemeLogin" parent="Theme.AppCompat.Light">
         <!--   your app branding color for the app bar -->
         <item name="colorPrimary">#FFFFFF</item>
         <!--   darker variant for the status bar and contextual app bars -->
@@ -10,4 +10,12 @@
         <item name="colorAccent">#FF9933</item>
     </style>
 
+    <style name="AppThemePlan" parent="AppThemeLogin">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="actionBarStyle">@style/ActionBarStyle</item>
+    </style>
+
+    <style name="ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="elevation">0dp</item>
+    </style>
 </resources>

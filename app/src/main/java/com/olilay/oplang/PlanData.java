@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -17,6 +18,7 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,6 +102,10 @@ public class PlanData extends AsyncTask<Void, Void, Void>
 
             saveCurrentDate();
         }
+        catch (UnknownHostException ue)
+        {
+            Log.v("OPlanG", "No internet connection to get PlanData!");
+        }
         catch(Exception ex)
         {
             new ExceptionSender(ex);
@@ -113,7 +119,7 @@ public class PlanData extends AsyncTask<Void, Void, Void>
     {
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("layer", "3cyMXqn9".toCharArray());
+                return new PasswordAuthentication("layer", "*****".toCharArray());
             }
         });
 

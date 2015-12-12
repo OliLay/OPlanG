@@ -3,7 +3,9 @@ package com.olilay.oplang;
 import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,6 +25,8 @@ public class PlanManager
 
     private Plan[] plans;
     private PlanFragment[] planFragments;
+
+    private boolean executedRelogin;
 
     private Activity activity;
     private Context context;
@@ -99,6 +103,20 @@ public class PlanManager
     public void onPlanDataRefreshed(PlanNotification planNotification, Plan plan)
     {
         planNotification.push();
+    }
+
+    public void relogin()
+    {
+        if(!executedRelogin) //prevent double re-login (cause both planImages will call this)
+        {
+            Log.v("OPlanG", "Executing relogin!");
+
+            executedRelogin = true;
+
+            Intent intent = new Intent(context, LoginActivity.class);
+            context.startActivity(intent); //stats the LoginActivity again, because the user needs a new session
+        }
+
     }
 
 

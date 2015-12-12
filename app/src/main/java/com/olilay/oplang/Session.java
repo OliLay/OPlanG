@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * Created by Oliver Layer on 20.08.2015.
@@ -38,7 +39,12 @@ public class Session extends AsyncTask<String, Void, HttpCookie>
         {
             return Create(loginData[0], loginData[1]);
         }
-        catch (IOException e)
+        catch (UnknownHostException ue)
+        {
+            //no internet connection or website down
+            return null;
+        }
+        catch (Exception e)
         {
             new ExceptionSender(e);
             return null;

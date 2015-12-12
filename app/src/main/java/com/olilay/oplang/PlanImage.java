@@ -11,6 +11,7 @@ import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
 public class PlanImage extends AsyncTask<String, Void, Bitmap>
 {
     private Plan plan;
+    private boolean internetConnectionFail;
 
 
     public PlanImage(String cookie, Plan plan)
@@ -37,7 +39,14 @@ public class PlanImage extends AsyncTask<String, Void, Bitmap>
 
     protected void onPostExecute(Bitmap bitmap)
     {
-        plan.onPlanImageRefreshed(bitmap);
+        if(internetConnectionFail || bitmap != null)
+        {
+            plan.onPlanImageRefreshed(bitmap);
+        }
+        else //session not valid
+        {
+            plan.getPlanManager().relogin();
+        }
     }
 
 
@@ -79,13 +88,16 @@ public class PlanImage extends AsyncTask<String, Void, Bitmap>
 
             return BitmapFactory.decodeStream(bis);
         }
+        catch(UnknownHostException ue)
+        {
+            internetConnectionFail = true;
+            Log.v("OPlanG", "No internet connection to get image!");
+
+            return null;
+        }
         catch(Exception e)
         {
             new ExceptionSender(e);
-            Log.v("OPlanG", "Session may be invalid! Logging in again...");
-
-            Intent intent = new Intent(plan.getPlanManager().getContext(), LoginActivity.class); //Relogin
-            plan.getPlanManager().getContext().startActivity(intent);
 
             return null;
         }

@@ -4,8 +4,10 @@ import android.app.*;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.method.Touch;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import java.util.Date;
@@ -81,11 +83,23 @@ public class PlanFragment extends Fragment
         {
             findControls(activity);
             progressBar.setVisibility(View.INVISIBLE);
-            imageView.setImageBitmap(bitmap);
+
+            if(bitmap == null) //couldn't get the PlanImage
+            {
+                imageView.setZoomable(false);
+                imageView.setScaleType(ImageView.ScaleType.CENTER);
+                imageView.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_signal_cellular_connected_no_internet_0_bar));
+            }
+            else
+            {
+                imageView.setZoomable(true);
+                imageView.setScaleType(ImageView.ScaleType.MATRIX);
+                imageView.setImageBitmap(bitmap);
+            }
         }
         catch(NullPointerException e)
         {
-            //Happens when user switches back to login while loading plans.
+            //Happens when user switches back to login while loading plans
         }
     }
 

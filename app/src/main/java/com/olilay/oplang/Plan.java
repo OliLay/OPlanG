@@ -59,9 +59,9 @@ public class Plan
 
     public void onPlanImageRefreshed(Bitmap bitmap)
     {
-        planFragment.finishLoading(planManager.getActivity(), bitmap);
+        planFragment.finishLoading(planManager.getActivity(), bitmap); //this will set the new bitmap as image in the TouchImageView
 
-        planManager.onPlanImageRefreshed(bitmap, this); //this will set the new bitmap as image in the TouchImageView
+        planManager.onPlanImageRefreshed(bitmap, this);
     }
 
     public void onPlanDataRefreshed(PlanNotification planNotification, Plan plan)

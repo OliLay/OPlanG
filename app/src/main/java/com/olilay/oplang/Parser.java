@@ -46,30 +46,32 @@ public class Parser
 
     public List<Change> getChanges()
     {
-        String changeText = content.split("Kommentar")[1].split("Sonstiges:")[0]; //we have to split the whole PDF twice to get the part where the changes table is
+        if(content.contains("Kommentar")) //make sure we actually have a table
+        {
+            String changeText = content.split("Kommentar")[1].split("Sonstiges:")[0]; //we have to split the whole PDF twice to get the part where the changes table is
 
-        String[] changeTextsPlans = new String[1];
-        if(changeText.contains("Otfried-Preußler-Gymnasium Pullach") && changeText.contains("Vertretungen:"))
-        {
-            changeTextsPlans = changeText.split("Otfried-Preußler-Gymnasium Pullach"); //we've got multiple plans
-        }
-        else
-        {
-            changeTextsPlans[0] = changeText; //we've got only one plan
-        }
-
-        for (String changeTextsPlan : changeTextsPlans)
-        {
-            try
+            String[] changeTextsPlans = new String[1];
+            if(changeText.contains("Otfried-Preußler-Gymnasium Pullach") && changeText.contains("Vertretungen:"))
             {
-                getChangesFromPlan(changeTextsPlan); //parse each plan seperatly
+                changeTextsPlans = changeText.split("Otfried-Preußler-Gymnasium Pullach"); //we've got multiple plans
             }
-            catch(Exception e)
+            else
             {
-                new ExceptionSender(e);
+                changeTextsPlans[0] = changeText; //we've got only one plan
+            }
+
+            for (String changeTextsPlan : changeTextsPlans)
+            {
+                try
+                {
+                    getChangesFromPlan(changeTextsPlan); //parse each plan seperatly
+                }
+                catch(Exception e)
+                {
+                    new ExceptionSender(e);
+                }
             }
         }
-
         return changes;
     }
 

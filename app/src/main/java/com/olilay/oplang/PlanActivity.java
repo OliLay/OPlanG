@@ -1,6 +1,8 @@
 package com.olilay.oplang;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +32,7 @@ public class PlanActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Heute"));
         tabLayout.addTab(tabLayout.newTab().setText("Morgen"));
-        tabLayout.addTab(tabLayout.newTab().setText("Einstellung."));
+        tabLayout.addTab(tabLayout.newTab().setText("Einstellungen"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         Intent i = getIntent();

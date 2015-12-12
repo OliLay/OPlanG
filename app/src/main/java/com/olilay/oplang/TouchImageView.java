@@ -39,6 +39,7 @@ public class TouchImageView extends ImageView {
     int oldMeasuredWidth, oldMeasuredHeight;
     ScaleGestureDetector mScaleDetector;
     Context context;
+    private boolean zoomable = true;
 
 
     public TouchImageView(Context context) {
@@ -66,51 +67,54 @@ public class TouchImageView extends ImageView {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mScaleDetector.onTouchEvent(event);
-                gestureDetector.onTouchEvent(event);
+                if (zoomable) {
+                    mScaleDetector.onTouchEvent(event);
+                    gestureDetector.onTouchEvent(event);
 
-                PointF curr = new PointF(event.getX(), event.getY());
+                    PointF curr = new PointF(event.getX(), event.getY());
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        last.set(curr);
-                        start.set(last);
-                        mode = DRAG;
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        if (mode == DRAG) {
-                            float deltaX = curr.x - last.x;
-                            float deltaY = curr.y - last.y;
-                            float fixTransX = getFixDragTrans(deltaX, viewWidth, origWidth * saveScale);
-                            float fixTransY = getFixDragTrans(deltaY, viewHeight, origHeight * saveScale);
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            last.set(curr);
+                            start.set(last);
+                            mode = DRAG;
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            if (mode == DRAG) {
+                                float deltaX = curr.x - last.x;
+                                float deltaY = curr.y - last.y;
+                                float fixTransX = getFixDragTrans(deltaX, viewWidth, origWidth * saveScale);
+                                float fixTransY = getFixDragTrans(deltaY, viewHeight, origHeight * saveScale);
 
-                            matrix.postTranslate(fixTransX, fixTransY);
-                            fixTrans();
-                            last.set(curr.x, curr.y);
-                        }
-                        break;
-                    case MotionEvent.ACTION_UP:
+                                matrix.postTranslate(fixTransX, fixTransY);
+                                fixTrans();
+                                last.set(curr.x, curr.y);
+                            }
+                            break;
+                        case MotionEvent.ACTION_UP:
 
-                    case MotionEvent.ACTION_POINTER_UP:
-                        mode = NONE;
-                        break;
+                        case MotionEvent.ACTION_POINTER_UP:
+                            mode = NONE;
+                            break;
+                    }
+
+                    setImageMatrix(matrix);
+                    invalidate();
                 }
 
-                setImageMatrix(matrix);
-                invalidate();
                 return true; // indicate event was handled
             }
 
             private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
-                    if (isNotZoomed()) {
-                        setZoom(2.0f, e.getRawX(), e.getRawY());
-                    } else {
-                        setZoom(0.1f, e.getRawX(), e.getRawY());
+                    if (zoomable) {
+                        if (isNotZoomed()) {
+                            setZoom(2.0f, e.getRawX(), e.getRawY());
+                        } else {
+                            setZoom(0.1f, e.getRawX(), e.getRawY());
+                        }
                     }
-
-
                     return super.onDoubleTap(e);
                 }
             });
@@ -256,6 +260,11 @@ public class TouchImageView extends ImageView {
     public boolean isNotZoomed()
     {
         return minScale + 0.1f >= saveScale;
+    }
+
+    public void setZoomable(boolean zommable)
+    {
+        this.zoomable = zommable;
     }
 
 }
