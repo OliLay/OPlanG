@@ -354,7 +354,7 @@ public class Parser
 
     public static String[] splitToMultipleLines(String content)
     {
-        String[] lines = new String[500];
+        String[] lines = new String[1000];
         int i = 0;
 
         Scanner scanner = new Scanner(content);
