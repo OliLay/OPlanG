@@ -12,6 +12,8 @@ import org.json.JSONException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,8 +41,11 @@ public class Change implements Serializable, Comparable<Change>
         Room = room;
         Hour = hour;
         Remark = remark;
+    }
 
-       // System.out.println(toStringDebug());
+    public Change(String affectedClass, String course, int hour, String subject, String oldTeacher, String newTeacher, String room, String remark)
+    {
+        this(Arrays.asList(affectedClass), course, hour, subject, oldTeacher, newTeacher, room, remark);
     }
 
 
@@ -79,22 +84,27 @@ public class Change implements Serializable, Comparable<Change>
     public String getCourse() { return Course; }
 
 
-    public static void saveChangeList(List<Change> changes, boolean today, Context context)
+    public static void saveChangeList(List<Change> changes, Date date, Context context)
     {
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = p.edit();
 
         Gson gson = new Gson();
-        editor.putString("oldChanges" + PlanData.isTodayToString(today), gson.toJson(changes));
+        editor.putString("oldChanges" + date.getDay() + date.getMonth() + date.getYear(), gson.toJson(changes));
         editor.apply();
     }
 
-    public static List<Change> loadChangeList(boolean today, Context context) throws JSONException
+    public static List<Change> loadChangeList(Date date, Context context) throws JSONException
     {
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
 
         Gson gson = new Gson();
-        String json = p.getString("oldChanges" + PlanData.isTodayToString(today), "");
+        String json = p.getString("oldChanges" + date.getDay() + date.getMonth() + date.getYear(), "");
+
+        if(json.isEmpty())
+        {
+            return new ArrayList<Change>(); //we didn't save this date once
+        }
 
         Type type = new TypeToken<List<Change>>(){}.getType();
         List<Change> changes = gson.fromJson(json, type);
@@ -110,36 +120,64 @@ public class Change implements Serializable, Comparable<Change>
     }
 
 
-    private String toStringDebug()
+    @Override
+    public boolean equals(Object changeObject)
     {
-        return "Classes: " + getAffectedClasses().toString() + "; Course: " + getCourse() + "; OldTeacher: " + getOldTeacher() + "; NewTeacher: " + getNewTeacher();
-    }
+        Change change = (Change)changeObject;
 
-    public boolean equals(Change change)
-    {
         return getCourse().equals(change.getCourse()) && getAffectedClasses().equals(change.getAffectedClasses()) && getHour().equals(change.getHour()) && getNewTeacher().equals(change.getNewTeacher()) && getOldTeacher().equals(change.getOldTeacher()) && getRemark().equals(change.getRemark()) && getRoom().equals(change.getRoom()) && getSubject().equals(change.getSubject());
     }
 
     @Override
-    public String toString()
-    {
-        if(Remark.contains("entfällt") || Remark.contains("Eigenstudium") || (Room.isEmpty() && NewTeacher.isEmpty()))
-        {
-            return getHour() + ". Stunde: " + getSubject() + " bei " + getOldTeacher() + " entfällt";
-        }
-        else if(Remark.contains("Raumänderung"))
-        {
-            return getHour() + ". Stunde: " + getSubject() + " bei " + getOldTeacher() + ", Raumänderung (" + getRoom() + ")";
-        }
-        else
-        {
-            return getHour() + ". Stunde: " + getSubject() + " bei " + getOldTeacher() + ", " + getNewTeacher() + " vertritt";
-        }
-    }
-
     public int compareTo(Change change)
     {
         return getHour() - change.getHour(); //this is for sorting an ArrayList<Change> by comparing their hour
+    }
+
+    public String toString(boolean isTeacher)
+    {
+        if(isTeacher)
+        {
+            if(Remark.contains("Raumänderung"))
+            {
+                return Hour + ". Stunde: " + AffectedClasses.get(0) + ", Raumänderung";
+            }
+            else
+            {
+                return Hour + ". Stunde: " + AffectedClasses.get(0) + " statt " + OldTeacher + ", Vertretung";
+            }
+        }
+        else
+        {
+            if(Remark.contains("entfällt") || Remark.contains("Eigenstudium") || (Room.isEmpty() && NewTeacher.isEmpty()))
+            {
+                return Hour + ". Stunde: " + Subject + " bei " + OldTeacher + " entfällt";
+            }
+            else if(Remark.contains("Raumänderung"))
+            {
+                if(Room.isEmpty())
+                {
+                    return Hour + ". Stunde: " + Subject + " bei " + OldTeacher + ", Raumänderung";
+                }
+                else
+                {
+                    return Hour + ". Stunde: " + Subject + " bei " + OldTeacher + ", Raumänderung (" + Room + ")";
+                }
+            }
+            else if(getNewTeacher().isEmpty())
+            {
+                return Hour + ". Stunde: " + Subject + " bei " + OldTeacher + ", " + NewTeacher + " vertritt";
+            }
+            else
+            {
+                return Hour + ". Stunde: " + Subject + " bei " + OldTeacher + ", Vertretung";
+            }
+        }
+    }
+
+    public String toStringDebug()
+    {
+        return "Classes: " + getAffectedClasses().toString() + "; Course: " + getCourse() + "; OldTeacher: " + getOldTeacher() + "; NewTeacher: " + getNewTeacher();
     }
 
 }

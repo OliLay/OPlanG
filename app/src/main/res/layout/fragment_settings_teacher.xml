@@ -1,65 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_height="fill_parent">
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name"
-        android:layout_marginLeft="80dp"
-        android:id="@+id/txt_NameHeading"
-        android:layout_marginTop="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name"
-        android:textColor="#000000"
-        android:layout_marginLeft="80dp"
-        android:id="@+id/txt_Name"
-        android:layout_below="@+id/txt_NameHeading"
-        android:layout_marginTop="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Klasse"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="80dp"
-        android:id="@+id/txt_Class"
-        android:layout_marginTop="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lehrer"
-        android:textColor="#000000"
-        android:id="@+id/txt_Teacher"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/txt_Class"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="80dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Als Lehrer ist es derzeit nicht möglich, sich über Änderungen im Vertretungsplan zu informieren. Schülern werden hier Einstellungen zu den Benachrichtigungen angezeigt."
-        android:textColor="#000000"
-        android:id="@+id/txt_TeacherInfo"
-        android:layout_below="@+id/txt_Name"
-        android:layout_marginTop="40dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
-
-    <TextView
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="© 2015 Oliver Layer \n OPlanG steht unter der Lizenz CC BY-NC-SA 3.0 DE \n Sourcecode unter https://github.com/OliLay/OPlanG \n \n Danke an Herr Fellermayr und an die Beta-Tester Philipp Oliver und Flo Ratzinger."
-        android:id="@+id/txt_Credits"
-        android:layout_alignParentBottom="true"
-        android:gravity="center" />
-</RelativeLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:layout_marginLeft="80dp"
+            android:id="@+id/txt_NameHeading"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textColor="#000000"
+            android:layout_marginLeft="80dp"
+            android:id="@+id/txt_Name"
+            android:layout_below="@+id/txt_NameHeading"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Klasse"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="80dp"
+            android:id="@+id/txt_Class"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lehrer"
+            android:textColor="#000000"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="79dp"
+            android:layout_below="@+id/txt_Class"
+            android:id="@+id/txt_Teacher"
+            android:layout_marginTop="20dp" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/txt_Teacher"
+            android:background="?android:attr/listDivider"
+            android:layout_marginTop="10dp" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Benachrichtigung erhalten sobald neuer Vertretungsplan erschienen ist und ich betroffen bin"
+            android:id="@+id/cb_SpecialPush"
+            android:layout_below="@+id/txt_Teacher"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aktualisierungsintervall (Minuten)"
+            android:id="@+id/txt_Interval"
+            android:layout_below="@+id/cb_SpecialPush"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
+
+
+        <NumberPicker
+            android:id="@+id/np_Interval"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_below="@+id/txt_Interval"
+            android:layout_centerHorizontal="true" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/np_Interval"
+            android:background="?android:attr/listDivider"
+            android:layout_marginTop="10dp" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Vor jedem Schultag um x Uhr eine Benachrichtigung erhalten, in der die Vertretungen für den nächsten Tag stehen"
+            android:id="@+id/cb_DailyPush"
+            android:layout_below="@+id/np_Interval"
+            android:layout_marginTop="20dp" />
+
+        <TimePicker
+            android:id="@+id/tp_DailyPush"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_below="@+id/cb_DailyPush"
+            android:layout_centerHorizontal="true"
+            android:timePickerMode="spinner"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Speichern"
+            android:id="@+id/btn_Save"
+            android:layout_below="@id/tp_DailyPush"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/btn_Save"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2015 Oliver Layer \n OPlanG steht unter der Lizenz CC BY-NC-SA 3.0 DE \n Sourcecode unter https://github.com/OliLay/OPlanG \n \n Danke an Herr Fellermayr und an die Beta-Tester Philipp Oliver und Flo Ratzinger."
+            android:id="@+id/txt_Credits"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/btn_Save"
+            android:gravity="center"
+            android:layout_marginTop="10dp" />
+
+    </RelativeLayout>
+</ScrollView>

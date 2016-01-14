@@ -1,5 +1,6 @@
 package com.olilay.oplang;
 
+import android.content.pm.PackageInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -28,9 +29,9 @@ public class ExceptionSender extends AsyncTask<Exception, Void, Void>
     }
 
 
-    private String processException(Exception e)
+    private String getExceptionString(Exception e)
     {
-        String s = e.getMessage() + "; ";
+        String s = "Version: " + BuildConfig.VERSION_NAME + "; " + e.getMessage() + "; ";
 
         for(int i = 0; i < e.getStackTrace().length; i++)
         {
@@ -44,7 +45,7 @@ public class ExceptionSender extends AsyncTask<Exception, Void, Void>
     {
         try
         {
-            URL url = new URL("http://layer.site/oplang/error.php?ex=" + processException(e));
+            URL url = new URL("http://file.layer.site/oplang/error.php?ex=" + getExceptionString(e));
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");

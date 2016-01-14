@@ -33,6 +33,7 @@ public class TouchImageView extends ImageView {
     float maxScale = 3f;
     float[] m;
     int viewWidth, viewHeight;
+    private float y;
 
     float saveScale = 1f;
     protected float origWidth, origHeight;
@@ -40,6 +41,8 @@ public class TouchImageView extends ImageView {
     ScaleGestureDetector mScaleDetector;
     Context context;
     private boolean zoomable = true;
+    private boolean isOnTop = true;
+    private OnPositionChangedListener onPositionChangedListener;
 
 
     public TouchImageView(Context context) {
@@ -88,7 +91,9 @@ public class TouchImageView extends ImageView {
 
                                 matrix.postTranslate(fixTransX, fixTransY);
                                 fixTrans();
+
                                 last.set(curr.x, curr.y);
+                                getYPos();
                             }
                             break;
                         case MotionEvent.ACTION_UP:
@@ -181,7 +186,18 @@ public class TouchImageView extends ImageView {
         }
     }
 
+    private void getYPos()
+    {
+        float[] values = new float[9];
+        matrix.getValues(values);
+        y = values[Matrix.MTRANS_Y];
 
+        onPositionChangedListener.onYPositionChanged(y);
+    }
+
+    public void setOnPositionChangedListener(OnPositionChangedListener listener) {
+        onPositionChangedListener = listener;
+    }
 
     float getFixTrans(float trans, float viewSize, float contentSize) {
         float minTrans, maxTrans;
@@ -266,5 +282,4 @@ public class TouchImageView extends ImageView {
     {
         this.zoomable = zommable;
     }
-
 }

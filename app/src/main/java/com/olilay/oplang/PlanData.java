@@ -32,18 +32,16 @@ import java.util.Locale;
  * Created by Oliver Layer on 29.09.2015.
  */
 
-public class PlanData extends AsyncTask<Void, Void, Void>
+public abstract class PlanData extends AsyncTask<Void, Void, Void>
 {
+    protected List<Change> changes;
+    protected Parser parser;
+    protected Plan plan;
+    protected Context context;
+
     private Date date;
     private Date refreshDate;
-
-    private List<Change> changes;
-
-    private Parser parser;
-
-    private Plan plan;
     private boolean showOnlyTomorrow;
-    private Context context;
 
 
     public PlanData(Plan plan, boolean showOnlyTomorrow, Context context)
@@ -52,7 +50,7 @@ public class PlanData extends AsyncTask<Void, Void, Void>
         this.showOnlyTomorrow = showOnlyTomorrow;
         this.context = context;
 
-        Refresh();
+        refresh();
     }
 
 
@@ -68,7 +66,7 @@ public class PlanData extends AsyncTask<Void, Void, Void>
             document.close();
             pdfFile.delete(); //make sure we delete that temp file again
 
-            parser = new Parser(content);
+            createParser(content);
 
             refreshDate = parser.getRefreshDate();
             date = parser.getPlanDate();
@@ -84,19 +82,19 @@ public class PlanData extends AsyncTask<Void, Void, Void>
 
                 if(cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR))
                 {
-                    List<Change> classChanges = getChangesOfClass(Settings.getUserClass(context), changes);
+                    List<Change> classChanges = getMyChanges();
                     onRefreshed(classChanges, date);
                 }
             }
             else if(Settings.getSpecialPush(context) && isPlanNewer())
             {
-                List<Change> newClassChanges = getChangesOfClass(Settings.getUserClass(context), changes);
+                List<Change> newChanges = getMyChanges();
 
-                if(checkIfChangesAreRelevant(newClassChanges, Change.loadChangeList(plan.isToday(), context)))
+                if(newChanges.size() > 0 && areMyChangesRelevant(newChanges, Change.loadChangeList(getDate(), context)))
                 {
-                    onRefreshed(newClassChanges, date);
+                    onRefreshed(newChanges, date);
 
-                    Change.saveChangeList(newClassChanges, plan.isToday(), context);
+                    Change.saveChangeList(newChanges, getDate(), context);
                 }
             }
 
@@ -129,9 +127,9 @@ public class PlanData extends AsyncTask<Void, Void, Void>
         OutputStream out = new FileOutputStream(tempFile);
         byte[] buf = new byte[1024];
         int len;
-        while((len=in.read(buf)) > 0)
+        while((len = in.read(buf)) > 0)
         {
-            out.write(buf,0,len);
+            out.write(buf, 0, len);
         }
         out.close();
         in.close();
@@ -139,62 +137,51 @@ public class PlanData extends AsyncTask<Void, Void, Void>
         return tempFile;
     }
 
-
-    private boolean isPlanNewer() throws ParseException {
-        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
-        String s = p.getString("plan" + isTodayToString(plan.isToday()) + "refreshDate", "01.01.1970 01:01");
-
-        Date oldDate = Parser.dateFormat.parse(s);
-
-        return refreshDate.after(oldDate);
-    }
-
-    private List<Change> getChangesOfClass(String _class, List<Change> changes)
+    private boolean areMyChangesRelevant(List<Change> newChanges, List<Change> oldChanges)
     {
-        List<Change> classChanges = new ArrayList<Change>();
-
-        for(int i = 0; i < changes.size(); i++)
-        {
-            if(changes.get(i).getAffectedClasses().contains(_class))
-            {
-                classChanges.add(changes.get(i));
-            }
-        }
-
-        Collections.sort(classChanges);
-
-        return classChanges;
+        return !newChanges.equals(oldChanges);
     }
 
-    private boolean checkIfChangesAreRelevant(List<Change> newChanges, List<Change> oldChanges)
-    {
-        for(int i = 0; i < newChanges.size(); i++)
-        {
-            if(!oldChanges.contains(newChanges.get(i)))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private void saveCurrentDate()
     {
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = p.edit();
-        editor.putString("plan" + isTodayToString(plan.isToday()) + "refreshDate", Parser.dateFormat.format(refreshDate));
-        editor.putString("plan" + isTodayToString(plan.isToday()) + "date", Parser.dateFormat.format(date));
+        editor.putString("plan" + getIsTodayToString(plan.isToday()) + "refreshDate", Parser.DateFormat.format(refreshDate));
+        editor.putString("plan" + getIsTodayToString(plan.isToday()) + "date", Parser.DateFormat.format(date));
         editor.apply();
     }
 
+    private boolean isPlanNewer() throws ParseException {
+        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
+        String s = p.getString("plan" + getIsTodayToString(plan.isToday()) + "refreshDate", "01.01.1970 01:01");
 
-    private void onRefreshed(List<Change> classChanges, Date date)
-    {
-        plan.onPlanDataRefreshed(new PlanNotification(classChanges, date, plan, context), plan);
+        Date oldDate = Parser.DateFormat.parse(s);
+
+        return refreshDate.after(oldDate);
     }
 
 
-    public static String isTodayToString(boolean isToday)
+    public void refresh()
+    {
+        execute();
+    }
+
+
+    protected abstract List<Change> getMyChanges();
+
+    protected abstract void createParser(String content);
+
+    protected abstract URL getDataURL() throws MalformedURLException;
+
+    protected abstract void onRefreshed(List<Change> changes, Date date);
+
+
+    public Date getRefreshDate() { return refreshDate; }
+
+    public Date getDate() { return date; }
+
+    public static String getIsTodayToString(boolean isToday)
     {
         if(isToday)
         {
@@ -206,24 +193,4 @@ public class PlanData extends AsyncTask<Void, Void, Void>
         }
     }
 
-    public void Refresh()
-    {
-        execute();
-    }
-
-
-    private URL getDataURL() throws MalformedURLException {
-        if(plan.isToday())
-        {
-            return new URL("https://secure.gymnasium-pullach.de/layer/Schueler%20Heute.pdf");
-        }
-        else
-        {
-            return new URL("https://secure.gymnasium-pullach.de/layer/Schueler%20Morgen.pdf");
-        }
-    }
-
-    public Date getRefreshDate() { return refreshDate; }
-
-    public Date getDate() { return date; }
 }

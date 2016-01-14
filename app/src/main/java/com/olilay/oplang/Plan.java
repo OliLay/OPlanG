@@ -46,14 +46,21 @@ public class Plan
 
     public void refreshPlanImage()
     {
-        planFragment.beginLoading(planManager.getActivity());
+        planFragment.beginLoading(planManager.getActivity(), planManager);
 
         planImage = new PlanImage(cookie, this);
     }
 
     public void refreshPlanData(boolean showOnlyTomorrow)
     {
-        planData = new PlanData(this, showOnlyTomorrow, planManager.getContext());
+        if(Settings.getIsTeacher(planManager.getContext()))
+        {
+            planData = new TeacherPlanData(this, showOnlyTomorrow, planManager.getContext());
+        }
+        else
+        {
+            planData = new PupilPlanData(this, showOnlyTomorrow, planManager.getContext());
+        }
     }
 
 

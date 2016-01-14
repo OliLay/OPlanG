@@ -3,12 +3,15 @@ package com.olilay.oplang;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.opengl.GLES10;
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Oliver Layer on 20.08.2015.

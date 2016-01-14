@@ -3,10 +3,14 @@ package com.olilay.oplang;
 import android.app.*;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.method.Touch;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -20,8 +24,10 @@ public class PlanFragment extends Fragment
 {
     private boolean today;
 
+    private PlanManager planManager;
     private ProgressBar progressBar;
     private TouchImageView imageView;
+    private SwipeRefreshLayout view;
 
     public static PlanFragment newInstance(boolean today)
     {
@@ -54,6 +60,25 @@ public class PlanFragment extends Fragment
         today = getArguments().getBoolean("isToday");
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        view = (SwipeRefreshLayout)inflater.inflate(layout, container, false);
+
+        view.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh()
+            {
+                planManager.refreshPlanImages();
+                view.setRefreshing(false);
+            }
+        });
+
+        view.setColorSchemeResources(R.color.orange);
+
+        return view;
+    }
+
 
     protected void findControls(Activity activity)
     {
@@ -70,11 +95,26 @@ public class PlanFragment extends Fragment
     }
 
 
-    public void beginLoading(Activity activity)
+    public void beginLoading(Activity activity, PlanManager planManager)
     {
+        this.planManager = planManager;
+
         findControls(activity);
         progressBar.setVisibility(View.VISIBLE);
         imageView.setImageBitmap(null);
+        imageView.setOnPositionChangedListener(new OnPositionChangedListener() {
+            @Override
+            public void onYPositionChanged(float y) {
+                if(y == 0.0 && imageView.isNotZoomed())
+                {
+                    view.setEnabled(true);
+                }
+                else
+                {
+                    view.setEnabled(false);
+                }
+            }
+        });
     }
 
     public void finishLoading(Activity activity, Bitmap bitmap)
@@ -101,6 +141,10 @@ public class PlanFragment extends Fragment
         {
             //Happens when user switches back to login while loading plans
         }
+        catch(Exception e)
+        {
+            new ExceptionSender(e);
+        }
     }
 
 
@@ -117,3 +161,5 @@ public class PlanFragment extends Fragment
     }
 
 }
+
+

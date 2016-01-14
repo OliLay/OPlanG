@@ -38,12 +38,12 @@
 
     <Spinner
         android:id="@+id/sp_Class"
-        android:layout_width="50dp"
+        android:layout_width="60dp"
         android:layout_height="50dp"
         android:layout_alignParentRight="true"
         android:dropDownWidth="70dp"
         android:layout_below="@+id/txt_Class"
-        android:layout_marginRight="75dp"
+        android:layout_marginRight="70dp"
         android:layout_marginTop="5dp"/>
 
 
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Push-Benachrichtigung erhalten sobald neuer Vertretungsplan erschienen ist und meine Klasse betroffen ist"
+        android:text="Benachrichtigung erhalten sobald neuer Vertretungsplan erschienen ist und meine Klasse betroffen ist"
         android:id="@+id/cb_SpecialPush"
         android:layout_below="@+id/sp_Class"
         android:layout_marginTop="10dp"/>
@@ -91,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Vor jedem Schultag um x Uhr eine Push-Benachrichtigung erhalten, in der die Vertretungen für den nächsten Tag stehen"
+        android:text="Vor jedem Schultag um x Uhr eine Benachrichtigung erhalten, in der die Vertretungen für den nächsten Tag stehen"
         android:id="@+id/cb_DailyPush"
         android:layout_below="@+id/np_Interval"
         android:layout_marginTop="20dp" />

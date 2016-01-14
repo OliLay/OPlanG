@@ -76,20 +76,16 @@ public class PlanManager
 
     public void refreshPlanData(boolean showOnlyTomorrow)
     {
-        if(!isTeacher)
+        if(Settings.getDailyPush(context) || Settings.getSpecialPush(context))
         {
-            if(Settings.getDailyPush(context) || Settings.getSpecialPush(context))
-            {
-                plans[0].refreshPlanData(showOnlyTomorrow);
-                plans[1].refreshPlanData(showOnlyTomorrow);
-            }
+            plans[0].refreshPlanData(showOnlyTomorrow);
+            plans[1].refreshPlanData(showOnlyTomorrow);
         }
-
     }
 
     public void changePlans()
     {
-        isTeacher = !isTeacher; //invert boolean: teachers will toggle to pupils, and back if they want to.
+        isTeacher = !isTeacher; //invert boolean: teachers will toggle to pupils, and back if they want to
         initPlans(isTeacher);
         refreshPlanImages();
     }

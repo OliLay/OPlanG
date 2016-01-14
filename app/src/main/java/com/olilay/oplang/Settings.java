@@ -26,23 +26,22 @@ public class Settings
     private TimePicker tp_DailyPush;
     private Button btn_Save;
 
+    private boolean isTeacher;
+
 
     public Settings(PlanActivity planActivity, boolean isTeacher)
     {
-        if(!isTeacher)
-        {
-            this.planActivity = planActivity;
+        this.isTeacher = isTeacher;
+        this.planActivity = planActivity;
 
-            getControls();
-            Load();
-        }
+        getControls();
+        Load();
     }
 
     private void getControls()
     {
         cb_specialPush = (CheckBox)planActivity.findViewById(R.id.cb_SpecialPush);
         btn_Save = (Button)planActivity.findViewById(R.id.btn_Save);
-        sp_Class = (Spinner) planActivity.findViewById(R.id.sp_Class);
         np_Interval = (NumberPicker)planActivity.findViewById(R.id.np_Interval);
         tp_DailyPush = (TimePicker)planActivity.findViewById(R.id.tp_DailyPush);
         cb_DailyPush = (CheckBox)planActivity.findViewById(R.id.cb_DailyPush);
@@ -80,15 +79,24 @@ public class Settings
 
         adapter = ArrayAdapter.createFromResource(planActivity, R.array.classes, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_Class.setAdapter(adapter);
+
+        if(!isTeacher)
+        {
+            sp_Class = (Spinner) planActivity.findViewById(R.id.sp_Class);
+            sp_Class.setAdapter(adapter);
+        }
     }
 
 
     public void Load()
     {
+        if(!isTeacher)
+        {
+            sp_Class.setSelection(adapter.getPosition(getUserClass(planActivity)));
+        }
+
         cb_specialPush.setChecked(getSpecialPush(planActivity));
         cb_DailyPush.setChecked(getDailyPush(planActivity));
-        sp_Class.setSelection(adapter.getPosition(getUserClass(planActivity)));
         tp_DailyPush.setCurrentHour(getDailyPushTime(planActivity)[0]);
         tp_DailyPush.setCurrentMinute(getDailyPushTime(planActivity)[1]);
 
@@ -97,7 +105,7 @@ public class Settings
             PlanService.setAlarmManager(getInterval(planActivity), planActivity);
         }
 
-        if(cb_DailyPush.isChecked())
+        if (cb_DailyPush.isChecked())
         {
             PlanService.setAlarmManager(planActivity);
         }
@@ -108,10 +116,14 @@ public class Settings
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(planActivity);
         SharedPreferences.Editor editor = p.edit();
 
+        if(!isTeacher)
+        {
+            editor.putString("class", sp_Class.getSelectedItem().toString());
+        }
+
         editor.putBoolean("getSpecialPush", cb_specialPush.isChecked());
         editor.putBoolean("getDailyPush", cb_DailyPush.isChecked());
         editor.putString("dailyPushTime", tp_DailyPush.getCurrentHour() + ":" + tp_DailyPush.getCurrentMinute());
-        editor.putString("class", sp_Class.getSelectedItem().toString());
         editor.putInt("interval", np_Interval.getValue());
         editor.apply();
 
@@ -169,7 +181,6 @@ public class Settings
         return timeInts;
     }
 
-
     public static void setIsTeacher(boolean isTeacher, Context context)
     {
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
@@ -185,5 +196,22 @@ public class Settings
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
 
         return p.getBoolean("isTeacher", false);
+    }
+
+    public static void setUsername(String username, Context context)
+    {
+        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = p.edit();
+
+        editor.putString("username", username);
+
+        editor.apply();
+    }
+
+    public static String getUsername(Context context)
+    {
+        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
+
+        return p.getString("username", "");
     }
 }

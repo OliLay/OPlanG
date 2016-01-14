@@ -18,17 +18,24 @@ public class PlanNotification
     private String[] lines;
 
 
-    public PlanNotification(List<Change> classChanges, Date date, Plan plan, Context context)
+    public PlanNotification(List<Change> changes, Date date, boolean isTeacher, Plan plan, Context context)
     {
         notificator = new Notificator(plan.isToday(), context);
         this.date = date;
         this.lines = new String[50];
 
-        lines[0] = classChanges.size() + " Vertretungen für Klasse " + Settings.getUserClass(context);
-
-        for(int i = 0; i < classChanges.size(); i++)
+        if(isTeacher)
         {
-            lines[i + 1] = classChanges.get(i).toString();
+            lines[0] = changes.size() + " Vertretungen für " + Settings.getUsername(context);
+        }
+        else
+        {
+            lines[0] = changes.size() + " Vertretungen für Klasse " + Settings.getUserClass(context);
+        }
+
+        for(int i = 0; i < changes.size(); i++)
+        {
+            lines[i + 1] = changes.get(i).toString(isTeacher);
         }
     }
 

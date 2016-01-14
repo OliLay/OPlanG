@@ -18,7 +18,7 @@ public class User
 
     public User(String wholeName, LoginActivity loginActivity)
     {
-        this.WholeName = wholeName;
+        this.WholeName = wholeName.substring(0, 1).toUpperCase() + wholeName.substring(1);
         this.loginActivity = loginActivity;
 
         String[] nameStrings = WholeName.split(" ");
@@ -31,6 +31,8 @@ public class User
             LastName = LastName.substring(0, 1).toUpperCase() + LastName.substring(1); //uppers the first letter of the name
             GivenName = GivenName.substring(0, 1).toUpperCase() + GivenName.substring(1);
         }
+
+        Settings.setUsername(wholeName, loginActivity);
     }
 
 

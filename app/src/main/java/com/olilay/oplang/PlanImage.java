@@ -10,10 +10,12 @@ import android.util.Log;
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Oliver Layer on 10.11.2015.
@@ -89,6 +91,13 @@ public class PlanImage extends AsyncTask<String, Void, Bitmap>
             return BitmapFactory.decodeStream(bis);
         }
         catch(UnknownHostException ue)
+        {
+            internetConnectionFail = true;
+            Log.v("OPlanG", "No internet connection to get image!");
+
+            return null;
+        }
+        catch(SocketTimeoutException se)
         {
             internetConnectionFail = true;
             Log.v("OPlanG", "No internet connection to get image!");

@@ -46,7 +46,8 @@ public class LoginHelper
 
         SharedPreferences.Editor editor = p.edit();
 
-        if(p.contains("loginName") && p.contains("loginPassword")) {
+        if(p.contains("loginName") && p.contains("loginPassword"))
+        {
             editor.remove("loginName");
             editor.remove("loginPassword");
             editor.apply();

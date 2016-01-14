@@ -43,11 +43,11 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onButtonLoginClicked(View v)
     {
-        Login(true);
+        login(true);
     }
 
 
-    private void Login(boolean checkForTeacher)
+    private void login(boolean checkForTeacher)
     {
         txt_LoginFailure.setVisibility(View.INVISIBLE);
         pg_Login.setVisibility(View.VISIBLE);
@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
             tb_LoginPassword.setText(data.get(1));
             cb_AutoLogin.setChecked(true);
 
-            Login(false);
+            login(false);
         }
     }
 
