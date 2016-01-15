@@ -27,7 +27,16 @@ public class TeacherParser extends Parser
     {
         if(content.contains("Kommentar")) //make sure we actually have a table
         {
-            String changeText = content.split("Kommentar")[1].split("Aufsichten")[0]; //we have to split the whole PDF twice to get the part where the changes table is
+            String changeText;
+
+            if(content.contains("Aufsichten:"))
+            {
+                changeText = content.split("Kommentar")[1].split("Aufsichten")[0]; //we have to split the whole PDF twice to get the part where the changes table is
+            }
+            else
+            {
+                changeText = content.split("Kommentar")[1].split("Pausenordnungsdienst:")[0]; //we have to split the whole PDF twice to get the part where the changes table is
+            }
 
             String[] changeTextsPlans = new String[1];
             if(changeText.contains("Otfried-Preußler-Gymnasium Pullach"))
