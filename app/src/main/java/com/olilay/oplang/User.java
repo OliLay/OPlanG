@@ -32,7 +32,7 @@ public class User
             GivenName = GivenName.substring(0, 1).toUpperCase() + GivenName.substring(1);
         }
 
-        Settings.setUsername(wholeName, loginActivity);
+        Settings.setUsername(WholeName, loginActivity);
     }
 
 

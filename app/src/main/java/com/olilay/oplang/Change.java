@@ -164,7 +164,7 @@ public class Change implements Serializable, Comparable<Change>
                     return Hour + ". Stunde: " + Subject + " bei " + OldTeacher + ", Raumänderung (" + Room + ")";
                 }
             }
-            else if(getNewTeacher().isEmpty())
+            else if(!NewTeacher.isEmpty())
             {
                 return Hour + ". Stunde: " + Subject + " bei " + OldTeacher + ", " + NewTeacher + " vertritt";
             }
