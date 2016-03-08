@@ -49,6 +49,15 @@ public class Fragment extends android.support.v4.app.Fragment
         return inflater.inflate(layout, container, false);
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+
+        PlanActivity activity = (PlanActivity)getActivity();
+        activity.onFragmentCreated();
+    }
+
 
     public void Refresh()
     {

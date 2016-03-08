@@ -1,15 +1,22 @@
 package com.olilay.oplang;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.opengl.GLES10;
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -22,11 +29,13 @@ public class PlanActivity extends AppCompatActivity {
     private PlanManager planManager;
     private String cookie;
     private Settings settings;
+    private int fragmentCreatedCounter;
 
     private boolean isTeacher;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
 
@@ -49,6 +58,8 @@ public class PlanActivity extends AppCompatActivity {
         planManager = new PlanManager(cookie, isTeacher, new PlanFragment[] {(PlanFragment)fragments[0], (PlanFragment)fragments[1]}, this);
 
         fragments[2] = SettingsFragment.newInstance(i.getStringExtra("wholeName"), i.getStringExtra("givenName"), i.getStringExtra("lastName"), isTeacher);
+        SettingsFragment settingsFragment = (SettingsFragment)fragments[2];
+        settingsFragment.init(this);
 
         final CustomViewPager viewPager = (CustomViewPager) findViewById(R.id.pager);
         final PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), fragments);
@@ -56,8 +67,7 @@ public class PlanActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(3);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.setPlanActivity(this);
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
-        {
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
@@ -73,15 +83,10 @@ public class PlanActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        settings = new Settings(this, isTeacher);
-        fragments[2].Refresh(this);
-
-        planManager.initPlans();
-        planManager.refreshPlanImages();
-
         MenuInflater inflater = getMenuInflater();
 
         if(isTeacher) { inflater.inflate(R.menu.menu_plan_teacher, menu); }
@@ -89,6 +94,21 @@ public class PlanActivity extends AppCompatActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
+
+    public void onFragmentCreated()
+    {
+        fragmentCreatedCounter += 1;
+        if(fragmentCreatedCounter == fragments.length)
+        {
+            settings = new Settings(this, isTeacher);
+
+            fragments[2].Refresh(this);
+
+            planManager.initPlans();
+            planManager.refreshPlanImages();
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -103,6 +123,7 @@ public class PlanActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
 
     public Fragment[] getFragments()

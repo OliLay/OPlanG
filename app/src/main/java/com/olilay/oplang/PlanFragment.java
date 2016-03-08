@@ -67,8 +67,7 @@ public class PlanFragment extends Fragment
 
         view.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh()
-            {
+            public void onRefresh() {
                 planManager.refreshPlanImages();
                 view.setRefreshing(false);
             }

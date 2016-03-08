@@ -2,7 +2,10 @@ package com.olilay.oplang;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
@@ -13,6 +16,7 @@ public class SettingsFragment extends Fragment
     private String givenName;
     private String lastName;
     private String wholeName;
+    private PlanActivity planActivity;
 
     public static SettingsFragment newInstance(String wholeName, String givenName, String lastName, boolean isTeacher)
     {
@@ -39,6 +43,10 @@ public class SettingsFragment extends Fragment
         return fragment;
     }
 
+    public void init(PlanActivity activity)
+    {
+        this.planActivity = activity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
